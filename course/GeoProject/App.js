@@ -27,7 +27,7 @@ export default function App() {
     longitudeDelta: 0.01,
   };
 
-  const markers = new Array();
+  const [messageList, setMessageList] = useState([]);
 
   const handleLocationPermission = async () => { 
     let permissionCheck = '';
@@ -71,9 +71,16 @@ export default function App() {
 
   const onMapPress = (e) => {
     console.log("coordinates:" + JSON.stringify(e.nativeEvent.coordinate));
-    markers.push(e.nativeEvent.coordinate);
+    setMessageList([
+      ...messageList,
+      {
+        // Use the current size as ID (needed to iterate the list later)
+        id: messageList.length + 1,
+        latitude: e.nativeEvent.coordinate.latitude,
+        longitude: e.nativeEvent.coordinate.longitude,
 
-    
+      }
+    ]);
   }
   handleMarker = (e) => {
     // stop onPress event from propagating to mapView
@@ -109,10 +116,13 @@ export default function App() {
             onPress={handleMarker}
           />
           
+          {messageList.map((m) => (<Marker key={m.id} coordinate={{latitude: m.latitude,longitude: m.longitude}}/>))}
+          
 
       </MapView>
         <Text style={styles.text}>Current latitude: {region.latitude}</Text>
         <Text style={styles.text}>Current longitude: {region.longitude}</Text>
+
       <StatusBar style="auto" />
     </View>
   );
